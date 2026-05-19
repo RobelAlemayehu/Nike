@@ -1,0 +1,44 @@
+name: nike_shop
+description: A premium Nike shoe shopping app with beautiful UI.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.2
+
+  # Smooth page indicator for carousel dots
+  smooth_page_indicator: ^1.2.0+3
+
+  # Icons
+  cupertino_icons: ^1.0.8
+
+  # Google Fonts (Poppins)
+  google_fonts: ^6.2.1
+
+  # Animations helper
+  animate_do: ^3.3.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/nike_logo.png"
+  min_sdk_android: 21
