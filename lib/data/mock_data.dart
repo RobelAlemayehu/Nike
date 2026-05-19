@@ -112,7 +112,7 @@ class MockData {
     ),
     Product(
       id: 'p6',
-      name: "Nike Dual Fusion Run women's running shoes",
+      name: "Nike Dual Fusion Run",
       category: "Running Shoe",
       price: 95.00,
       rating: 4.8,
