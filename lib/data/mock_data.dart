@@ -92,7 +92,7 @@ class MockData {
     ),
     Product(
       id: 'p5',
-      name: "Nike Free Run 2 running shoes",
+      name: "Nike Free Run 2",
       category: "Running Shoe",
       price: 120.00,
       rating: 4.4,
