@@ -93,7 +93,7 @@ class MockData {
     Product(
       id: 'p5',
       name: "Nike Free Run 2 running shoes",
-      category: "Men's Shoe",
+      category: "Running Shoe",
       price: 120.00,
       rating: 4.4,
       reviewCount: 256,
@@ -112,8 +112,8 @@ class MockData {
     ),
     Product(
       id: 'p6',
-      name: "Nike Dual Fusion Run",
-      category: "Women's Shoe",
+      name: "Nike Dual Fusion Run women's running shoes",
+      category: "Running Shoe",
       price: 95.00,
       rating: 4.8,
       reviewCount: 312,
@@ -132,8 +132,8 @@ class MockData {
     ),
     Product(
       id: 'p7',
-      name: "Nike Lunar Ascend Golf Shoes",
-      category: "Men's Shoe",
+      name: "Nike Lunar Ascend",
+      category: "Golf Shoes",
       price: 130.00,
       rating: 4.6,
       reviewCount: 184,
@@ -148,6 +148,44 @@ class MockData {
         'US': ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12'],
         'UK': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11'],
         'EU': ['41', '42', '43', '44', '45', '46'],
+      },
+    ),
+    Product(
+      id: 'p8',
+      name: "Air Force 1",
+      category: "Men's Shoe",
+      price: 110.00,
+      rating: 4.5,
+      reviewCount: 150,
+      description:
+          "The Air Force 1 is a classic shoe that never goes out of style. "
+          "It features a durable leather upper and a comfortable air-cushioned sole.",
+      imageUrls: [
+        'assets/images/air_force1.png',
+      ],
+      sizes: {
+        'US': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11'],
+        'UK': ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10'],
+        'EU': ['40', '41', '42', '43', '44', '45'],
+      },
+    ),
+    Product(
+      id: 'p9',
+      name: "Nike Air Max Plus OG",
+      category: "Men's Shoe",
+      price: 160.00,
+      rating: 4.7,
+      reviewCount: 210,
+      description:
+          "The Nike Air Max Plus OG brings back the iconic design with modern comfort. "
+          "It features the signature Tuned Air technology for optimal stability and cushioning.",
+      imageUrls: [
+        'assets/images/nike_air_max_plus_og.webp',
+      ],
+      sizes: {
+        'US': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11'],
+        'UK': ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10'],
+        'EU': ['40', '41', '42', '43', '44', '45'],
       },
     ),
   ];
@@ -390,6 +428,29 @@ class MockData {
             "Very comfortable golf shoes. They look like regular sneakers which "
             "is nice. Just make sure to get the right size.",
         date: '11.05.2024',
+      ),
+    ],
+    'p8': [
+      Review(
+        id: 'r8a',
+        productId: 'p8',
+        reviewerName: 'Alex Johnson',
+        avatarUrl: 'https://i.pravatar.cc/100?img=20',
+        rating: 5.0,
+        text:
+            "You can never go wrong with a classic pair. Perfect fit and style.",
+        date: '18.05.2024',
+      ),
+    ],
+    'p9': [
+      Review(
+        id: 'r9a',
+        productId: 'p9',
+        reviewerName: 'Sam Riley',
+        avatarUrl: 'https://i.pravatar.cc/100?img=21',
+        rating: 4.5,
+        text: "Love the retro look and the Tuned Air cushioning is superb.",
+        date: '19.05.2024',
       ),
     ],
   };
