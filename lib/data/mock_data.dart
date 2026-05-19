@@ -21,7 +21,7 @@ class MockData {
           'the past while it heads into the future. The iconic Waffle sole, '
           'bold colour blocking and classic TPU accents make it a must-have sneaker.',
       imageUrls: [
-        'assets/images/air_max_1.png',  
+        'assets/images/air_max_1.png',
       ],
       sizes: {
         'US': ['5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9'],
@@ -36,8 +36,7 @@ class MockData {
       price: 110.00,
       rating: 4.7,
       reviewCount: 342,
-      description:
-          "The radiance lives on in theNike Kobe 4, the basketball "
+      description: "The radiance lives on in theNike Kobe 4, the basketball "
           'original that puts a fresh spin on what you know best: durably '
           'stitched overlays, iconic foam midsole and the classic Swoosh.',
       imageUrls: [
@@ -91,6 +90,66 @@ class MockData {
         'EU': ['36', '37', '38', '39', '40', '41', '42'],
       },
     ),
+    Product(
+      id: 'p5',
+      name: "Nike Free Run 2 running shoes",
+      category: "Men's Shoe",
+      price: 120.00,
+      rating: 4.4,
+      reviewCount: 256,
+      description:
+          "The Nike Free Run 2 running shoes feature a lightweight, flexible design "
+          "that provides a barefoot-like feel for a natural stride. The breathable "
+          "mesh upper and Phylon midsole deliver exceptional comfort and support.",
+      imageUrls: [
+        'assets/images/air_force_2.png',
+      ],
+      sizes: {
+        'US': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11'],
+        'UK': ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10'],
+        'EU': ['40', '41', '42', '43', '44', '45'],
+      },
+    ),
+    Product(
+      id: 'p6',
+      name: "Nike Dual Fusion Run",
+      category: "Women's Shoe",
+      price: 95.00,
+      rating: 4.8,
+      reviewCount: 312,
+      description:
+          "The Nike Dual Fusion Run women's running shoes offer a dual-density "
+          "midsole for superior cushioning and support. The breathable mesh upper "
+          "and durable rubber outsole provide a comfortable and stable ride.",
+      imageUrls: [
+        'assets/images/air_force_3.png',
+      ],
+      sizes: {
+        'US': ['5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9'],
+        'UK': ['3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7'],
+        'EU': ['36', '37', '38', '39', '40', '41', '42'],
+      },
+    ),
+    Product(
+      id: 'p7',
+      name: "Nike Lunar Ascend Golf Shoes",
+      category: "Men's Shoe",
+      price: 130.00,
+      rating: 4.6,
+      reviewCount: 184,
+      description:
+          "The Nike Lunar Ascend Golf Shoes feature lightweight Lunarlon cushioning "
+          "and a durable, spikeless outsole for exceptional comfort and traction on "
+          "the course. The sleek design ensures you look sharp while playing.",
+      imageUrls: [
+        'assets/images/air_max_2.png',
+      ],
+      sizes: {
+        'US': ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12'],
+        'UK': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11'],
+        'EU': ['41', '42', '43', '44', '45', '46'],
+      },
+    ),
   ];
 
   // ---------------------------------------------------------------------------
@@ -104,7 +163,8 @@ class MockData {
         reviewerName: 'Royal Parvej',
         avatarUrl: 'https://i.pravatar.cc/100?img=11',
         rating: 5.0,
-        text: "The most comfortable Nike Air Pegasus+ 30  I've worn. The sole cushioning is "
+        text:
+            "The most comfortable Nike Air Pegasus+ 30  I've worn. The sole cushioning is "
             "unbelievable and I've had zero foot pain even after 12-hour shifts. "
             "Absolutely worth every penny.",
         date: '10.02.2024',
@@ -126,7 +186,8 @@ class MockData {
         reviewerName: 'Sasha Mendes',
         avatarUrl: 'https://i.pravatar.cc/100?img=47',
         rating: 4.5,
-        text: "Stylish and very comfortable. The Nike Air Pegasus unit under the heel "
+        text:
+            "Stylish and very comfortable. The Nike Air Pegasus unit under the heel "
             "gives great support. Wore these on a 10-hour walking day and "
             "my feet felt fine. Highly recommend!",
         date: '05.02.2024',
@@ -220,7 +281,8 @@ class MockData {
         reviewerName: 'Sofia Reyes',
         avatarUrl: 'https://i.pravatar.cc/100?img=9',
         rating: 5.0,
-        text: "Obsessed with the Women's Nike Air Max Thea! The ankle support is "
+        text:
+            "Obsessed with the Women's Nike Air Max Thea! The ankle support is "
             "incredible and I wore them all day at a festival without any "
             "discomfort. The colourway is stunning — so many compliments.",
         date: '22.05.2024',
@@ -257,6 +319,77 @@ class MockData {
             "the leather is premium and they look even better in person. "
             "My new favourite pair without a doubt!",
         date: '10.05.2024',
+      ),
+    ],
+    'p5': [
+      Review(
+        id: 'r5a',
+        productId: 'p5',
+        reviewerName: 'John Doe',
+        avatarUrl: 'https://i.pravatar.cc/100?img=12',
+        rating: 5.0,
+        text:
+            "Very comfortable for everyday running. They feel incredibly light "
+            "and natural on the feet. Highly recommend the Free Run 2.",
+        date: '10.05.2024',
+      ),
+      Review(
+        id: 'r5b',
+        productId: 'p5',
+        reviewerName: 'Mike Smith',
+        avatarUrl: 'https://i.pravatar.cc/100?img=13',
+        rating: 4.0,
+        text:
+            "Good flexibility, but the sole wears out a bit faster than expected. "
+            "Still a solid running shoe overall.",
+        date: '08.05.2024',
+      ),
+    ],
+    'p6': [
+      Review(
+        id: 'r6a',
+        productId: 'p6',
+        reviewerName: 'Sarah Jenkins',
+        avatarUrl: 'https://i.pravatar.cc/100?img=14',
+        rating: 5.0,
+        text:
+            "The Dual Fusion cushioning is amazing. Perfect for my morning jogs. "
+            "They fit true to size and look great too.",
+        date: '12.05.2024',
+      ),
+      Review(
+        id: 'r6b',
+        productId: 'p6',
+        reviewerName: 'Emily Clark',
+        avatarUrl: 'https://i.pravatar.cc/100?img=15',
+        rating: 4.5,
+        text: "Great support and comfort. Took a little time to break in, but "
+            "now they are my go-to running shoes.",
+        date: '05.05.2024',
+      ),
+    ],
+    'p7': [
+      Review(
+        id: 'r7a',
+        productId: 'p7',
+        reviewerName: 'David Lee',
+        avatarUrl: 'https://i.pravatar.cc/100?img=17',
+        rating: 5.0,
+        text:
+            "Excellent grip on the course without the need for traditional spikes. "
+            "The Lunarlon foam keeps my feet fresh through 18 holes.",
+        date: '15.05.2024',
+      ),
+      Review(
+        id: 'r7b',
+        productId: 'p7',
+        reviewerName: 'Chris Evans',
+        avatarUrl: 'https://i.pravatar.cc/100?img=18',
+        rating: 4.0,
+        text:
+            "Very comfortable golf shoes. They look like regular sneakers which "
+            "is nice. Just make sure to get the right size.",
+        date: '11.05.2024',
       ),
     ],
   };
