@@ -9,9 +9,11 @@ import '../constants/app_dimensions.dart';
 import '../constants/app_text_styles.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_item_widget.dart';
+import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+  final bool showBack;
+  const CartScreen({super.key, this.showBack = true});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class CartScreen extends StatelessWidget {
         child: Column(
           children: [
             // ── Custom header ──────────────────────────────────────────────
-            _CartHeader(itemCount: items.length),
+            _CartHeader(itemCount: items.length, showBack: showBack),
             // ── Body ────────────────────────────────────────────────────────
             Expanded(
               child: items.isEmpty
@@ -55,7 +57,8 @@ class CartScreen extends StatelessWidget {
 // ── Cart header ───────────────────────────────────────────────────────────────
 class _CartHeader extends StatelessWidget {
   final int itemCount;
-  const _CartHeader({required this.itemCount});
+  final bool showBack;
+  const _CartHeader({required this.itemCount, required this.showBack});
 
   @override
   Widget build(BuildContext context) {
@@ -63,28 +66,30 @@ class _CartHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
       child: Row(
         children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Navigator.maybePop(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+          // Back button (only shown if showBack is true)
+          if (showBack) ...[
+            GestureDetector(
+              onTap: () => Navigator.maybePop(context),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    size: 18, color: AppColors.black),
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  size: 18, color: AppColors.black),
             ),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
+          ],
           // Title + count
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,24 +166,28 @@ class _CartHeader extends StatelessWidget {
                 ),
               )
             else
-              ...bookmarked.map((item) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    item.product.imageUrls.first,
-                    width: 50, height: 50,
-                    fit: BoxFit.contain,
-                  ),
+              Expanded(
+                child: ListView(
+                  children: bookmarked.map((item) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        item.product.imageUrls.first,
+                        width: 50, height: 50,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    title: Text(item.product.name, style: AppTextStyles.reviewerName),
+                    subtitle: Text(
+                      '\$${item.product.price.toStringAsFixed(2)}',
+                      style: AppTextStyles.bodySmall,
+                    ),
+                    trailing: const Icon(Icons.bookmark_rounded,
+                        color: AppColors.orange),
+                  )).toList(),
                 ),
-                title: Text(item.product.name, style: AppTextStyles.reviewerName),
-                subtitle: Text(
-                  '\$${item.product.price.toStringAsFixed(2)}',
-                  style: AppTextStyles.bodySmall,
-                ),
-                trailing: const Icon(Icons.bookmark_rounded,
-                    color: AppColors.orange),
-              )),
+              ),
             const SizedBox(height: 16),
           ],
         ),
@@ -199,7 +208,7 @@ class _EmptyCartView extends StatelessWidget {
           children: [
             Container(
               width: 100, height: 100,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.lightGray,
                 shape: BoxShape.circle,
               ),
@@ -218,19 +227,6 @@ class _EmptyCartView extends StatelessWidget {
               style: AppTextStyles.bodyMedium,
             ),
             const SizedBox(height: 28),
-            GestureDetector(
-              onTap: () => Navigator.maybePop(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 32, vertical: 14),
-                decoration: BoxDecoration(
-                  color: AppColors.black,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Text('Continue Shopping',
-                    style: AppTextStyles.button),
-              ),
-            ),
           ],
         ),
       ),
@@ -247,15 +243,8 @@ class _CheckoutSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.background,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
-          ),
-        ],
       ),
       child: SafeArea(
         top: false,
@@ -301,49 +290,9 @@ class _CheckoutSection extends StatelessWidget {
   }
 
   void _onCheckout(BuildContext context) {
-    final cart = context.read<CartProvider>();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        backgroundColor: AppColors.white,
-        title: const Icon(
-          Icons.check_circle_rounded,
-          color: AppColors.orange,
-          size: 52,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Order Placed!', style: AppTextStyles.heading2),
-            const SizedBox(height: 8),
-            Text(
-              'Your order has been placed successfully.\nThank you for shopping with Nike!',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium,
-            ),
-          ],
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              cart.clearCart();
-              Navigator.pop(context);  // close dialog
-              Navigator.maybePop(context); // back to product screen
-            },
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
-              decoration: BoxDecoration(
-                color: AppColors.black,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text('Done', style: AppTextStyles.button),
-            ),
-          ),
-        ],
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CheckoutScreen()),
     );
   }
 }

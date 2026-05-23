@@ -15,9 +15,10 @@ import '../providers/product_provider.dart';
 import '../widgets/app_header.dart';
 import '../widgets/rating_widget.dart';
 import '../widgets/expandable_tile.dart';
-import '../widgets/add_to_cart_bar.dart';
 import '../models/review_model.dart';
+import '../models/cart_item_model.dart';
 import '../data/mock_data.dart';
+import 'checkout_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
@@ -28,13 +29,25 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final PageController _pageController = PageController();
+  int _selectedColorIndex = 0;
+
+  final List<Color> _colors = [
+    AppColors.orange,
+    AppColors.darkGray,
+    AppColors.black,
+  ];
+
+  final List<String> _colorNames = [
+    'Bright Orange',
+    'Dark Shadow',
+    'Deep Obsidian',
+  ];
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
-
 
   // Show snack-bar feedback when item is added
   void _showAddedSnack(String productName) {
@@ -58,7 +71,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const AppHeader(showBack: false),
+      appBar: const AppHeader(showBack: true),
       body: Column(
         children: [
           // ── Scrollable content ────────────────────────────────────────────
@@ -113,6 +126,56 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                         const SizedBox(height: 22),
+
+                        // ── Color selector ─────────────────────────────────
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 120),
+                          duration: const Duration(milliseconds: 400),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text('Color: ', style: AppTextStyles.sectionTitle),
+                                  Text(
+                                    _colorNames[_selectedColorIndex],
+                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.orange),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: List.generate(_colors.length, (idx) {
+                                  final color = _colors[idx];
+                                  final isSelected = _selectedColorIndex == idx;
+                                  return GestureDetector(
+                                    onTap: () => setState(() => _selectedColorIndex = idx),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(right: 14),
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isSelected ? AppColors.orange : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 16,
+                                        backgroundColor: color,
+                                        child: isSelected
+                                            ? const Icon(Icons.check_rounded, color: AppColors.white, size: 16)
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+
                         // ── Size selector ──────────────────────────────────
                         FadeInUp(
                           delay: const Duration(milliseconds: 160),
@@ -120,6 +183,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           child: _buildSizeSelector(productProv),
                         ),
                         const SizedBox(height: 22),
+
                         // ── Expandable sections ────────────────────────────
                         FadeInUp(
                           delay: const Duration(milliseconds: 240),
@@ -156,14 +220,103 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           ),
-          // ── Bottom bar ────────────────────────────────────────────────────
-          AddToCartBar(
-            isFavourite: productProv.isFavourite,
-            onFavouriteToggle: () => productProv.toggleFavourite(),
-            onAddToCart: () {
-              cartProv.addToCart(product, productProv.selectedSize);
-              _showAddedSnack(product.name);
-            },
+          // ── Bottom Action Bar ─────────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                children: [
+                  // Favorite button
+                  GestureDetector(
+                    onTap: () => productProv.toggleFavourite(),
+                    child: Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: productProv.isFavourite ? AppColors.orangeLight : AppColors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: productProv.isFavourite
+                              ? AppColors.orange.withValues(alpha: 0.4)
+                              : AppColors.lightGray,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        productProv.isFavourite ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                        color: productProv.isFavourite ? AppColors.orange : AppColors.mediumGray,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Add to Cart Button
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        cartProv.addToCart(product, productProv.selectedSize);
+                        _showAddedSnack(product.name);
+                      },
+                      child: Container(
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          border: Border.all(color: AppColors.black, width: 1.5),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Add to Cart',
+                          style: TextStyle(color: AppColors.black, fontWeight: FontWeight.w700, fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Buy Now Button
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        final buyNowItem = CartItem(
+                          product: product,
+                          selectedSize: productProv.selectedSize,
+                          quantity: 1,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CheckoutScreen(directItems: [buyNowItem]),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: AppColors.black,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Buy Now',
+                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w700, fontSize: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
