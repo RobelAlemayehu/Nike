@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/widgets/cart_item_widget.dart
 // Individual cart card with image, title, price, qty selector, bookmark & trash
+// Full dark/light mode adaptive design.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class CartItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = context.read<CartProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Dismissible(
       key: Key('${item.product.id}_${item.selectedSize}'),
@@ -39,11 +41,11 @@ class CartItemWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.surface(context),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -60,7 +62,10 @@ class CartItemWidget extends StatelessWidget {
                 child: Container(
                   width: 82,
                   height: 82,
-                  color: AppColors.lightGray,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkSurface : AppColors.lightGray,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   child: Image.asset(
                     item.product.imageUrls.first,
                     fit: BoxFit.contain,
@@ -74,13 +79,18 @@ class CartItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Name
-                    Text(item.product.name, style: AppTextStyles.heading3),
+                    Text(
+                      item.product.name,
+                      style: AppTextStyles.heading3.copyWith(
+                        color: AppColors.primaryText(context),
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     // Price
                     Text(
                       '\$${item.product.price.toStringAsFixed(2)}',
                       style: AppTextStyles.categoryLabel.copyWith(
-                        color: AppColors.mediumGray,
+                        color: AppColors.secondaryText(context),
                         fontSize: 13,
                       ),
                     ),
@@ -89,7 +99,7 @@ class CartItemWidget extends StatelessWidget {
                     Text(
                       'Size: ${item.selectedSize}',
                       style: AppTextStyles.categoryLabel.copyWith(
-                        color: AppColors.black,
+                        color: AppColors.primaryText(context),
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                       ),

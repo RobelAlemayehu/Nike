@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/screens/cart_screen.dart — SCREEN 3: My Bag / Cart
+// Full dark/light mode adaptive design.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,7 @@ class CartScreen extends StatelessWidget {
     final items = cart.items;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.scaffoldBg(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -62,6 +63,8 @@ class _CartHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
       child: Row(
@@ -74,18 +77,18 @@ class _CartHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: AppColors.surface(context),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
+                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    size: 18, color: AppColors.black),
+                child: Icon(Icons.arrow_back_ios_new_rounded,
+                    size: 18, color: AppColors.primaryText(context)),
               ),
             ),
             const SizedBox(width: 12),
@@ -94,10 +97,17 @@ class _CartHeader extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('My Bag', style: AppTextStyles.bagTitle),
+              Text(
+                'My Bag',
+                style: AppTextStyles.bagTitle.copyWith(
+                  color: AppColors.primaryText(context),
+                ),
+              ),
               Text(
                 '$itemCount ${itemCount == 1 ? 'Item' : 'Items'}',
-                style: AppTextStyles.categoryLabel,
+                style: AppTextStyles.categoryLabel.copyWith(
+                  color: AppColors.secondaryText(context),
+                ),
               ),
             ],
           ),
@@ -106,15 +116,15 @@ class _CartHeader extends StatelessWidget {
           TextButton(
             onPressed: () => _showBookmarks(context),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.black,
+              foregroundColor: AppColors.primaryText(context),
               padding: EdgeInsets.zero,
             ),
             child: Text(
               'SEE BOOKMARK LIST',
               style: AppTextStyles.label.copyWith(
-                color: AppColors.black,
+                color: AppColors.primaryText(context),
                 decoration: TextDecoration.underline,
-                decorationColor: AppColors.black,
+                decorationColor: AppColors.primaryText(context),
                 fontSize: 11,
               ),
             ),
@@ -127,14 +137,15 @@ class _CartHeader extends StatelessWidget {
   void _showBookmarks(BuildContext context) {
     final cart = context.read<CartProvider>();
     final bookmarked = cart.bookmarkedItems;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: AppColors.surface(context),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -146,13 +157,18 @@ class _CartHeader extends StatelessWidget {
               child: Container(
                 width: 40, height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.lightGray,
+                  color: isDark ? AppColors.darkBorder : AppColors.lightGray,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            Text('Bookmarked Items', style: AppTextStyles.heading3),
+            Text(
+              'Bookmarked Items',
+              style: AppTextStyles.heading3.copyWith(
+                color: AppColors.primaryText(context),
+              ),
+            ),
             const SizedBox(height: 16),
             if (bookmarked.isEmpty)
               Center(
@@ -161,7 +177,9 @@ class _CartHeader extends StatelessWidget {
                   child: Text(
                     'No bookmarks yet.\nTap the bookmark icon on cart items to save them.',
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyMedium,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.secondaryText(context),
+                    ),
                   ),
                 ),
               )
@@ -172,16 +190,26 @@ class _CartHeader extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        item.product.imageUrls.first,
-                        width: 50, height: 50,
-                        fit: BoxFit.contain,
+                      child: Container(
+                        color: isDark ? AppColors.darkSurface : AppColors.lightGray,
+                        child: Image.asset(
+                          item.product.imageUrls.first,
+                          width: 50, height: 50,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                    title: Text(item.product.name, style: AppTextStyles.reviewerName),
+                    title: Text(
+                      item.product.name,
+                      style: AppTextStyles.reviewerName.copyWith(
+                        color: AppColors.primaryText(context),
+                      ),
+                    ),
                     subtitle: Text(
                       '\$${item.product.price.toStringAsFixed(2)}',
-                      style: AppTextStyles.bodySmall,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.secondaryText(context),
+                      ),
                     ),
                     trailing: const Icon(Icons.bookmark_rounded,
                         color: AppColors.orange),
@@ -200,6 +228,8 @@ class _CartHeader extends StatelessWidget {
 class _EmptyCartView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
       child: FadeInUp(
         duration: const Duration(milliseconds: 500),
@@ -208,8 +238,8 @@ class _EmptyCartView extends StatelessWidget {
           children: [
             Container(
               width: 100, height: 100,
-              decoration: const BoxDecoration(
-                color: AppColors.lightGray,
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.lightGray,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -219,12 +249,19 @@ class _EmptyCartView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Your bag is empty', style: AppTextStyles.heading3),
+            Text(
+              'Your bag is empty',
+              style: AppTextStyles.heading3.copyWith(
+                color: AppColors.primaryText(context),
+              ),
+            ),
             const SizedBox(height: 8),
             Text(
               'Add items from the product page\nto get started.',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.secondaryText(context),
+              ),
             ),
             const SizedBox(height: 28),
           ],
@@ -241,10 +278,12 @@ class _CheckoutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      decoration: const BoxDecoration(
-        color: AppColors.background,
+      decoration: BoxDecoration(
+        color: AppColors.scaffoldBg(context),
       ),
       child: SafeArea(
         top: false,
@@ -254,7 +293,12 @@ class _CheckoutSection extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Total', style: AppTextStyles.sectionTitle),
+                Text(
+                  'Total',
+                  style: AppTextStyles.sectionTitle.copyWith(
+                    color: AppColors.primaryText(context),
+                  ),
+                ),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder: (child, anim) =>
@@ -262,7 +306,10 @@ class _CheckoutSection extends StatelessWidget {
                   child: Text(
                     '\$${total.toStringAsFixed(2)}',
                     key: ValueKey(total),
-                    style: AppTextStyles.price.copyWith(fontSize: 22),
+                    style: AppTextStyles.price.copyWith(
+                      fontSize: 22,
+                      color: AppColors.primaryText(context),
+                    ),
                   ),
                 ),
               ],
@@ -275,11 +322,16 @@ class _CheckoutSection extends StatelessWidget {
                 width: double.infinity,
                 height: 54,
                 decoration: BoxDecoration(
-                  color: AppColors.black,
+                  color: AppColors.blackButton(context),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 alignment: Alignment.center,
-                child: Text('Checkout', style: AppTextStyles.button),
+                child: Text(
+                  'Checkout',
+                  style: AppTextStyles.button.copyWith(
+                    color: isDark ? AppColors.black : AppColors.white,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 12),

@@ -57,6 +57,17 @@ class NikeShopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.watch<AuthProvider>().isDarkMode;
 
+    // Dynamically adjust status bar icons to contrast with background
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: isDark ? AppColors.darkSurface : AppColors.white,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      ),
+    );
+
     return MaterialApp(
       title: 'Nike Shop',
       debugShowCheckedModeBanner: false,
@@ -64,16 +75,18 @@ class NikeShopApp extends StatelessWidget {
       // ── Material 3 theme ────────────────────────────────────────────────────
       theme: ThemeData(
         useMaterial3: true,
+        brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.orange,
           brightness: Brightness.light,
         ),
         scaffoldBackgroundColor: AppColors.background,
-        // Use Poppins throughout the app
         textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
+          Theme.of(context).textTheme.apply(
+            bodyColor: AppColors.black,
+            displayColor: AppColors.black,
+          ),
         ),
-        // Smooth page transitions globally
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
             TargetPlatform.android: CupertinoPageTransitionsBuilder(),
@@ -86,36 +99,56 @@ class NikeShopApp extends StatelessWidget {
           scrolledUnderElevation: 0,
           centerTitle: true,
           iconTheme: IconThemeData(color: AppColors.black),
+          titleTextStyle: TextStyle(
+            color: AppColors.black,
+            fontFamily: 'Poppins',
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         splashFactory: NoSplash.splashFactory,
         highlightColor: Colors.transparent,
       ),
 
-      // ── Dark theme (optional) ───────────────────────────────────────────────
+      // ── Dark theme (fully customized) ───────────────────────────────────────
       darkTheme: ThemeData(
         useMaterial3: true,
+        brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.orange,
           brightness: Brightness.dark,
         ),
-        scaffoldBackgroundColor: const Color(0xFF1E1E1E),
+        scaffoldBackgroundColor: AppColors.darkBackground,
         textTheme: GoogleFonts.poppinsTextTheme(
-          ThemeData.dark().textTheme,
+          ThemeData.dark().textTheme.apply(
+            bodyColor: AppColors.darkText,
+            displayColor: AppColors.darkText,
+          ),
+        ),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1E1E1E),
+          backgroundColor: AppColors.darkBackground,
           elevation: 0,
           scrolledUnderElevation: 0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: AppColors.darkText),
+          titleTextStyle: TextStyle(
+            color: AppColors.darkText,
+            fontFamily: 'Poppins',
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         splashFactory: NoSplash.splashFactory,
         highlightColor: Colors.transparent,
       ),
 
       themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-
-      // ── Root screen ─────────────────────────────────────────────────────────
       home: const SplashScreen(),
     );
   }

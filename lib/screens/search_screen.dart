@@ -1,5 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/screens/search_screen.dart
+// Beautiful search page with filtering bottom sheet, sorting menu, and
+// adaptive Dark/Light grid layouts.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -91,19 +93,8 @@ class _SearchScreenState extends State<SearchScreen> {
       // 2. Category Filter
       if (_selectedCategory != 'All') {
         final cat = _selectedCategory.toLowerCase();
-        // Match Running/Casual/Sports/Formal against category and description
-        if (cat == 'running') {
-          if (!p.category.toLowerCase().contains('running') && 
-              !p.name.toLowerCase().contains('run') &&
-              !p.name.toLowerCase().contains('pegasus')) return false;
-        } else if (cat == 'casual') {
-          if (!p.category.toLowerCase().contains('men') && 
-              !p.category.toLowerCase().contains('women')) return false;
-        } else if (cat == 'sports' || cat == 'formal') {
-          // Fallback or custom matches
-          if (cat == 'sports' && !p.category.toLowerCase().contains('golf') && !p.name.toLowerCase().contains('kobe')) return false;
-          if (cat == 'formal' && !p.name.toLowerCase().contains('pegasus') && !p.name.toLowerCase().contains('ascend')) return false;
-        }
+        final pCat = p.category.toLowerCase();
+        if (!pCat.contains(cat)) return false;
       }
 
       // 3. Price Filter
@@ -132,7 +123,6 @@ class _SearchScreenState extends State<SearchScreen> {
     } else if (_selectedSort == 'Price: High to Low') {
       filtered.sort((a, b) => b.price.compareTo(a.price));
     } else {
-      // "Newest" - sort by ID or default rating
       filtered.sort((a, b) => b.rating.compareTo(a.rating));
     }
 
@@ -140,15 +130,16 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _openFilterBottomSheet() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => StatefulBuilder(
         builder: (ctx, setModalState) => Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          decoration: BoxDecoration(
+            color: AppColors.surface(context),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           child: Column(
@@ -158,9 +149,10 @@ class _SearchScreenState extends State<SearchScreen> {
               // Pull Bar
               Center(
                 child: Container(
-                  width: 40, height: 4,
+                  width: 40,
+                  height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.lightGray,
+                    color: isDark ? AppColors.darkBorder : AppColors.lightGray,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -169,7 +161,10 @@ class _SearchScreenState extends State<SearchScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Filters', style: AppTextStyles.heading2),
+                  Text(
+                    'Filters',
+                    style: AppTextStyles.heading2.copyWith(color: AppColors.primaryText(context)),
+                  ),
                   TextButton(
                     onPressed: () {
                       setModalState(() {
@@ -186,7 +181,10 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 16),
 
               // Category
-              Text('Category', style: AppTextStyles.sectionTitle),
+              Text(
+                'Category',
+                style: AppTextStyles.sectionTitle.copyWith(color: AppColors.primaryText(context)),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -201,10 +199,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     selectedColor: AppColors.orange,
                     labelStyle: TextStyle(
-                      color: isSel ? AppColors.white : AppColors.black,
+                      color: isSel ? AppColors.white : AppColors.primaryText(context),
                       fontWeight: isSel ? FontWeight.w600 : FontWeight.w400,
                     ),
-                    backgroundColor: AppColors.lightGray,
+                    backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightGray,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   );
                 }).toList(),
@@ -212,7 +210,10 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 20),
 
               // Price range
-              Text('Price Range', style: AppTextStyles.sectionTitle),
+              Text(
+                'Price Range',
+                style: AppTextStyles.sectionTitle.copyWith(color: AppColors.primaryText(context)),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -227,10 +228,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     selectedColor: AppColors.orange,
                     labelStyle: TextStyle(
-                      color: isSel ? AppColors.white : AppColors.black,
+                      color: isSel ? AppColors.white : AppColors.primaryText(context),
                       fontWeight: isSel ? FontWeight.w600 : FontWeight.w400,
                     ),
-                    backgroundColor: AppColors.lightGray,
+                    backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightGray,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   );
                 }).toList(),
@@ -238,7 +239,10 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 20),
 
               // Brand
-              Text('Collection / Brand', style: AppTextStyles.sectionTitle),
+              Text(
+                'Collection / Brand',
+                style: AppTextStyles.sectionTitle.copyWith(color: AppColors.primaryText(context)),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -254,10 +258,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     selectedColor: AppColors.orange,
                     labelStyle: TextStyle(
-                      color: isSel ? AppColors.white : AppColors.black,
+                      color: isSel ? AppColors.white : AppColors.primaryText(context),
                       fontWeight: isSel ? FontWeight.w600 : FontWeight.w400,
                     ),
-                    backgroundColor: AppColors.lightGray,
+                    backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightGray,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   );
                 }).toList(),
@@ -271,10 +275,13 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.black,
+                    backgroundColor: AppColors.blackButton(context),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: Text('Apply Filters', style: AppTextStyles.button),
+                  child: Text(
+                    'Apply Filters',
+                    style: AppTextStyles.button.copyWith(color: isDark ? AppColors.black : AppColors.white),
+                  ),
                 ),
               ),
             ],
@@ -288,9 +295,10 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final productProv = context.watch<ProductProvider>();
     final filtered = _getFilteredProducts(productProv.products);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.scaffoldBg(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -303,11 +311,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: Container(
                       height: 50,
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: AppColors.surface(context),
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           )
@@ -321,10 +329,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           Expanded(
                             child: TextField(
                               controller: _searchController,
-                              style: const TextStyle(fontSize: 14, color: AppColors.black),
-                              decoration: const InputDecoration(
+                              style: TextStyle(fontSize: 14, color: AppColors.primaryText(context)),
+                              decoration: InputDecoration(
                                 hintText: 'Search premium shoes...',
-                                hintStyle: TextStyle(color: AppColors.mediumGray, fontSize: 13),
+                                hintStyle: TextStyle(color: AppColors.secondaryText(context), fontSize: 13),
                                 border: InputBorder.none,
                                 isDense: true,
                               ),
@@ -357,17 +365,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: AppColors.surface(context),
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           )
                         ],
                       ),
-                      child: const Icon(Icons.tune_rounded, color: AppColors.black, size: 20),
+                      child: Icon(Icons.tune_rounded, color: AppColors.primaryText(context), size: 20),
                     ),
                   )
                 ],
@@ -381,7 +389,11 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Text(
                     '${filtered.length} Items Found',
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: AppColors.darkGray),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      color: AppColors.secondaryText(context),
+                    ),
                   ),
                   const Spacer(),
                   // Sort dropdown
@@ -426,14 +438,21 @@ class _SearchScreenState extends State<SearchScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 80, height: 80,
-                            decoration: const BoxDecoration(color: AppColors.white, shape: BoxShape.circle),
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(color: AppColors.surface(context), shape: BoxShape.circle),
                             child: const Icon(Icons.search_off_rounded, size: 36, color: AppColors.mediumGray),
                           ),
                           const SizedBox(height: 16),
-                          const Text('No shoes match your criteria.', style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.black)),
+                          Text(
+                            'No shoes match your criteria.',
+                            style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.primaryText(context)),
+                          ),
                           const SizedBox(height: 8),
-                          Text('Try modifying your filters or query.', style: AppTextStyles.bodySmall),
+                          Text(
+                            'Try modifying your filters or query.',
+                            style: AppTextStyles.bodySmall.copyWith(color: AppColors.secondaryText(context)),
+                          ),
                         ],
                       ),
                     )
@@ -454,7 +473,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           product: product,
                           brand: brandName,
                           onTap: () {
-                            // Find product index in global products list
                             final actualIndex = productProv.products.indexWhere((p) => p.id == product.id);
                             if (actualIndex >= 0) {
                               productProv.setCarouselIndex(actualIndex);
@@ -493,15 +511,16 @@ class _SearchProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.surface(context),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -535,7 +554,7 @@ class _SearchProductCard extends StatelessWidget {
               product.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.black),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.primaryText(context)),
             ),
             const SizedBox(height: 4),
 
@@ -546,7 +565,7 @@ class _SearchProductCard extends StatelessWidget {
             // Price Row
             Text(
               '\$${product.price.toStringAsFixed(2)}',
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.black),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.primaryText(context)),
             ),
           ],
         ),

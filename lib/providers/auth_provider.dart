@@ -1,11 +1,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/providers/auth_provider.dart
-// Authentication state, user settings, addresses, and order history using Supabase and SharedPreferences
+// Authentication state, user settings, addresses, saved cards, and order history
+// using Supabase and SharedPreferences
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/order_model.dart';
+import '../models/address_model.dart';
+import '../models/credit_card_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final _supabase = Supabase.instance.client;
@@ -13,27 +16,35 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoggedIn = false;
   String _userName = 'User';
   String _userEmail = '';
+  String _avatarPath = '';          // Local file path to avatar image
   bool _isDarkMode = false;
   bool _notificationsEnabled = true;
 
-  final List<String> _savedAddresses = [];
+  final List<AddressModel> _savedAddresses = [];
+  final List<CreditCardModel> _savedCards = [];
   final List<OrderModel> _pastOrders = [];
 
-  // Getters
+  // ── Getters ────────────────────────────────────────────────────────────────
   bool get isLoggedIn => _isLoggedIn;
   String get userName => _userName;
   String get userEmail => _userEmail;
+  String get avatarPath => _avatarPath;
   bool get isDarkMode => _isDarkMode;
   bool get notificationsEnabled => _notificationsEnabled;
-  List<String> get savedAddresses => List.unmodifiable(_savedAddresses);
+  List<AddressModel> get savedAddresses => List.unmodifiable(_savedAddresses);
+  List<CreditCardModel> get savedCards => List.unmodifiable(_savedCards);
   List<OrderModel> get pastOrders => List.unmodifiable(_pastOrders);
+
+  int get totalOrders => _pastOrders.length;
+  double get totalSpent =>
+      _pastOrders.fold(0.0, (sum, o) => sum + o.total);
 
   AuthProvider() {
     _loadAuthData();
     _setupAuthListener();
   }
 
-  // Set up auth state change listener to sync login status and fetch database values dynamically
+  // ── Auth listener ──────────────────────────────────────────────────────────
   void _setupAuthListener() {
     _supabase.auth.onAuthStateChange.listen((data) async {
       final session = data.session;
@@ -52,19 +63,23 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  // Load configuration settings from SharedPreferences
+  // ── Load from SharedPreferences ───────────────────────────────────────────
   Future<void> _loadAuthData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       _isDarkMode = prefs.getBool('isDarkMode') ?? false;
       _notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
+      _avatarPath = prefs.getString('avatarPath') ?? '';
 
-      // Load saved addresses
-      final addresses = prefs.getStringList('savedAddresses');
-      if (addresses != null) {
-        _savedAddresses.clear();
-        _savedAddresses.addAll(addresses);
-      }
+      // Load saved addresses (encoded strings)
+      final addrStrings = prefs.getStringList('savedAddresses') ?? [];
+      _savedAddresses.clear();
+      _savedAddresses.addAll(addrStrings.map((s) => AddressModel.decode(s)));
+
+      // Load saved cards (encoded strings)
+      final cardStrings = prefs.getStringList('savedCards') ?? [];
+      _savedCards.clear();
+      _savedCards.addAll(cardStrings.map((s) => CreditCardModel.decode(s)));
 
       // Check current Supabase session
       final session = _supabase.auth.currentSession;
@@ -82,23 +97,27 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Fetch the custom user profile from public.profiles table
+  // ── Supabase: Fetch user profile ───────────────────────────────────────────
   Future<void> _fetchUserProfile(String userId) async {
     try {
       final data = await _supabase
           .from('profiles')
-          .select('full_name')
+          .select('full_name, avatar_url')
           .eq('id', userId)
           .maybeSingle();
       if (data != null) {
         _userName = data['full_name'] ?? 'User';
+        // Only use remote avatar if no local one set
+        if (_avatarPath.isEmpty && data['avatar_url'] != null) {
+          _avatarPath = data['avatar_url'];
+        }
       }
     } catch (e) {
       debugPrint('Error fetching user profile: $e');
     }
   }
 
-  // Fetch past orders from Supabase order tables
+  // ── Supabase: Fetch past orders ────────────────────────────────────────────
   Future<void> _fetchPastOrders(String userId) async {
     try {
       final ordersData = await _supabase
@@ -142,7 +161,8 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Supabase Sign Up
+  // ── Auth methods ───────────────────────────────────────────────────────────
+
   Future<bool> signUp(String name, String email, String password) async {
     try {
       final response = await _supabase.auth.signUp(
@@ -157,7 +177,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Supabase Login
   Future<bool> login(String email, String password) async {
     try {
       final response = await _supabase.auth.signInWithPassword(
@@ -171,16 +190,44 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Supabase Logout
   Future<void> logout() async {
     try {
       await _supabase.auth.signOut();
+      // Clear local avatar path on logout
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('avatarPath');
+      _avatarPath = '';
     } catch (e) {
       debugPrint('Error logging out: $e');
     }
   }
 
-  // Toggle Dark Mode
+  // ── Profile update ─────────────────────────────────────────────────────────
+
+  Future<void> updateProfile(String name, {String? avatarPath}) async {
+    _userName = name;
+    if (avatarPath != null) _avatarPath = avatarPath;
+
+    final prefs = await SharedPreferences.getInstance();
+    if (avatarPath != null) await prefs.setString('avatarPath', _avatarPath);
+
+    // Update Supabase profile if logged in
+    final user = _supabase.auth.currentUser;
+    if (user != null) {
+      try {
+        await _supabase.from('profiles').upsert({
+          'id': user.id,
+          'full_name': name,
+        });
+      } catch (e) {
+        debugPrint('Error updating profile in Supabase: $e');
+      }
+    }
+    notifyListeners();
+  }
+
+  // ── Settings ───────────────────────────────────────────────────────────────
+
   Future<void> toggleDarkMode() async {
     _isDarkMode = !_isDarkMode;
     final prefs = await SharedPreferences.getInstance();
@@ -188,7 +235,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Toggle Notifications
   Future<void> toggleNotifications() async {
     _notificationsEnabled = !_notificationsEnabled;
     final prefs = await SharedPreferences.getInstance();
@@ -196,27 +242,63 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Add saved address
-  Future<void> addAddress(String address) async {
-    if (address.trim().isEmpty) return;
+  // ── Addresses ──────────────────────────────────────────────────────────────
+
+  Future<void> addAddress(AddressModel address) async {
     _savedAddresses.add(address);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('savedAddresses', _savedAddresses);
+    await _persistAddresses();
     notifyListeners();
   }
 
-  // Place order and save to history in Supabase
+  Future<void> removeAddress(int index) async {
+    if (index < 0 || index >= _savedAddresses.length) return;
+    _savedAddresses.removeAt(index);
+    await _persistAddresses();
+    notifyListeners();
+  }
+
+  Future<void> _persistAddresses() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+      'savedAddresses',
+      _savedAddresses.map((a) => a.encode()).toList(),
+    );
+  }
+
+  // ── Credit Cards ───────────────────────────────────────────────────────────
+
+  Future<void> addCard(CreditCardModel card) async {
+    _savedCards.add(card);
+    await _persistCards();
+    notifyListeners();
+  }
+
+  Future<void> removeCard(int index) async {
+    if (index < 0 || index >= _savedCards.length) return;
+    _savedCards.removeAt(index);
+    await _persistCards();
+    notifyListeners();
+  }
+
+  Future<void> _persistCards() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+      'savedCards',
+      _savedCards.map((c) => c.encode()).toList(),
+    );
+  }
+
+  // ── Orders ─────────────────────────────────────────────────────────────────
+
   Future<void> placeOrder(OrderModel order) async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
-      // Fallback locally if user is not authenticated for some reason
       _pastOrders.insert(0, order);
       notifyListeners();
       return;
     }
 
     try {
-      // 1. Insert into orders table
       final orderResult = await _supabase.from('orders').insert({
         'user_id': user.id,
         'status': order.status,
@@ -232,7 +314,6 @@ class AuthProvider extends ChangeNotifier {
 
       final newOrderId = orderResult['id'];
 
-      // 2. Insert items
       final itemsToInsert = order.items.map((item) => {
         'order_id': newOrderId,
         'product_id': item.productName,
@@ -244,12 +325,9 @@ class AuthProvider extends ChangeNotifier {
       }).toList();
 
       await _supabase.from('order_items').insert(itemsToInsert);
-
-      // Reload orders to get database synchronized state
       await _fetchPastOrders(user.id);
     } catch (e) {
       debugPrint('Error inserting order to Supabase: $e');
-      // Fallback locally
       _pastOrders.insert(0, order);
       notifyListeners();
     }

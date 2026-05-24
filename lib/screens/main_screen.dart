@@ -51,6 +51,8 @@ class _MainScreenState extends State<MainScreen> {
       const ProfileScreen(),
     ];
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
@@ -59,10 +61,10 @@ class _MainScreenState extends State<MainScreen> {
       // ── Custom bottom navigation bar ──────────────────────────────────────
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.surface(context),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 15,
               offset: const Offset(0, -4),
             ),

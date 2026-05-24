@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
@@ -63,11 +64,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: AppColors.white,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
-                  // Fallback if logo is missing or corrupt
-                  return const Icon(
-                    Icons.bolt_rounded,
-                    size: 100,
-                    color: AppColors.white,
+                  return Text(
+                    'NIKE',
+                    style: GoogleFonts.poppins(
+                      fontSize: 54,
+                      fontWeight: FontWeight.w900,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.white,
+                      letterSpacing: -2.0,
+                    ),
                   );
                 },
               ),

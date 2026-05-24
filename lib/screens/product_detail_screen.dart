@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/screens/product_detail_screen.dart
-// SCREEN 1 – Product Details with carousel, size picker, expandable sections
+// Beautiful product details screen with full-screen image carousel, unit-aware
+// size selectors, modular expandable specification tiles, and dynamic dark mode.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,12 +50,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     super.dispose();
   }
 
-  // Show snack-bar feedback when item is added
   void _showAddedSnack(String productName) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$productName added to cart!'),
-        backgroundColor: AppColors.black,
+        backgroundColor: AppColors.blackButton(context),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -68,9 +68,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final productProv = context.watch<ProductProvider>();
     final cartProv = context.read<CartProvider>();
     final product = productProv.product;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: const AppHeader(showBack: true),
       body: Column(
         children: [
@@ -97,8 +98,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(product.category,
-                                  style: AppTextStyles.categoryLabel),
+                              Text(
+                                product.category,
+                                style: AppTextStyles.categoryLabel.copyWith(
+                                  color: AppColors.secondaryText(context),
+                                ),
+                              ),
                               RatingWidget(
                                 rating: product.rating,
                                 size: 14,
@@ -116,11 +121,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(product.name,
-                                  style: AppTextStyles.heading1),
+                              Expanded(
+                                child: Text(
+                                  product.name,
+                                  style: AppTextStyles.heading1.copyWith(
+                                    color: AppColors.primaryText(context),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
                               Text(
                                 '\$${product.price.toStringAsFixed(2)}',
-                                style: AppTextStyles.price,
+                                style: AppTextStyles.price.copyWith(
+                                  color: AppColors.primaryText(context),
+                                ),
                               ),
                             ],
                           ),
@@ -136,7 +150,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Text('Color: ', style: AppTextStyles.sectionTitle),
+                                  Text(
+                                    'Color: ',
+                                    style: AppTextStyles.sectionTitle.copyWith(
+                                      color: AppColors.primaryText(context),
+                                    ),
+                                  ),
                                   Text(
                                     _colorNames[_selectedColorIndex],
                                     style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.orange),
@@ -224,10 +243,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: AppColors.scaffoldBg(context),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
                   blurRadius: 10,
                   offset: const Offset(0, -4),
                 ),
@@ -244,18 +263,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: productProv.isFavourite ? AppColors.orangeLight : AppColors.white,
+                        color: productProv.isFavourite ? AppColors.orangeLight : AppColors.surface(context),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: productProv.isFavourite
                               ? AppColors.orange.withValues(alpha: 0.4)
-                              : AppColors.lightGray,
+                              : (isDark ? AppColors.darkBorder : AppColors.lightGray),
                         ),
                       ),
                       alignment: Alignment.center,
                       child: Icon(
                         productProv.isFavourite ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
-                        color: productProv.isFavourite ? AppColors.orange : AppColors.mediumGray,
+                        color: productProv.isFavourite ? AppColors.orange : AppColors.secondaryText(context),
                         size: 22,
                       ),
                     ),
@@ -271,14 +290,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       child: Container(
                         height: 52,
                         decoration: BoxDecoration(
-                          color: AppColors.white,
-                          border: Border.all(color: AppColors.black, width: 1.5),
+                          color: AppColors.surface(context),
+                          border: Border.all(color: AppColors.primaryText(context), width: 1.5),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         alignment: Alignment.center,
-                        child: const Text(
+                        child: Text(
                           'Add to Cart',
-                          style: TextStyle(color: AppColors.black, fontWeight: FontWeight.w700, fontSize: 14),
+                          style: TextStyle(
+                            color: AppColors.primaryText(context),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ),
@@ -303,13 +326,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       child: Container(
                         height: 52,
                         decoration: BoxDecoration(
-                          color: AppColors.black,
+                          color: AppColors.blackButton(context),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         alignment: Alignment.center,
-                        child: const Text(
+                        child: Text(
                           'Buy Now',
-                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w700, fontSize: 14),
+                          style: TextStyle(
+                            color: isDark ? AppColors.black : AppColors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ),
@@ -357,7 +384,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             dotHeight: 8,
             dotWidth: 8,
             expansionFactor: 3,
-            activeDotColor: AppColors.black,
+            activeDotColor: AppColors.primaryText(context),
             dotColor: AppColors.mediumGray.withValues(alpha: 0.3),
             spacing: 5,
           ),
@@ -375,7 +402,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         // Header row: "Size:" label + unit tabs
         Row(
           children: [
-            Text('Size:', style: AppTextStyles.sectionTitle),
+            Text(
+              'Size:',
+              style: AppTextStyles.sectionTitle.copyWith(
+                color: AppColors.primaryText(context),
+              ),
+            ),
             const Spacer(),
             Row(
               children: units
@@ -435,7 +467,7 @@ class _SizeUnitTab extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-            color: isSelected ? AppColors.black : AppColors.mediumGray,
+            color: isSelected ? AppColors.primaryText(context) : AppColors.secondaryText(context),
           ),
           child: Text(label),
         ),
@@ -458,6 +490,7 @@ class _SizeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -466,7 +499,7 @@ class _SizeChip extends StatelessWidget {
         width: 52,
         height: 46,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.orange : AppColors.white,
+          color: isSelected ? AppColors.orange : AppColors.surface(context),
           borderRadius: BorderRadius.circular(12),
           boxShadow: isSelected
               ? [
@@ -478,7 +511,7 @@ class _SizeChip extends StatelessWidget {
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
+                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   )
@@ -490,7 +523,7 @@ class _SizeChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: isSelected ? AppColors.white : AppColors.darkGray,
+            color: isSelected ? AppColors.white : AppColors.primaryText(context),
           ),
         ),
       ),
@@ -505,15 +538,16 @@ class _ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -528,17 +562,34 @@ class _ReviewCard extends StatelessWidget {
                 radius: 22,
                 backgroundImage: NetworkImage(review.avatarUrl),
                 onBackgroundImageError: (_, __) {},
-                backgroundColor: AppColors.lightGray,
+                backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightGray,
               ),
               const SizedBox(width: 12),
-              Expanded(child: Text(review.reviewerName, style: AppTextStyles.reviewerName)),
+              Expanded(
+                child: Text(
+                  review.reviewerName,
+                  style: AppTextStyles.reviewerName.copyWith(
+                    color: AppColors.primaryText(context),
+                  ),
+                ),
+              ),
               RatingWidget(rating: review.rating, size: 16),
             ],
           ),
           const SizedBox(height: 12),
-          Text(review.text, style: AppTextStyles.reviewText),
+          Text(
+            review.text,
+            style: AppTextStyles.reviewText.copyWith(
+              color: AppColors.primaryText(context),
+            ),
+          ),
           const SizedBox(height: 10),
-          Text(review.date, style: AppTextStyles.reviewDate),
+          Text(
+            review.date,
+            style: AppTextStyles.reviewDate.copyWith(
+              color: AppColors.secondaryText(context),
+            ),
+          ),
         ],
       ),
     );

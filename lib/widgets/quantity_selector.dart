@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/widgets/quantity_selector.dart
-// Orange +/- quantity control used in the Cart screen
+// Orange +/- quantity control — dark/light mode adaptive.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
@@ -22,38 +22,25 @@ class QuantitySelector extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Decrement button ───────────────────────────────────────────────────
-        _QtyButton(
-          icon: Icons.remove,
-          onTap: onDecrement,
-          isPrimary: false,
-        ),
-        // ── Quantity display ───────────────────────────────────────────────────
+        _QtyButton(icon: Icons.remove, onTap: onDecrement, isPrimary: false),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) => ScaleTransition(
-              scale: animation,
-              child: child,
-            ),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
             child: Text(
               '$quantity',
               key: ValueKey(quantity),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: AppColors.black,
+                color: AppColors.primaryText(context),
               ),
             ),
           ),
         ),
-        // ── Increment button ───────────────────────────────────────────────────
-        _QtyButton(
-          icon: Icons.add,
-          onTap: onIncrement,
-          isPrimary: true,
-        ),
+        _QtyButton(icon: Icons.add, onTap: onIncrement, isPrimary: true),
       ],
     );
   }
@@ -72,6 +59,7 @@ class _QtyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -79,13 +67,15 @@ class _QtyButton extends StatelessWidget {
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: isPrimary ? AppColors.orange : AppColors.lightGray,
+          color: isPrimary
+              ? AppColors.orange
+              : (isDark ? AppColors.darkSurface : AppColors.lightGray),
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
           size: 16,
-          color: isPrimary ? AppColors.white : AppColors.darkGray,
+          color: isPrimary ? AppColors.white : AppColors.primaryText(context),
         ),
       ),
     );

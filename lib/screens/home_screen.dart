@@ -1,5 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/screens/home_screen.dart
+// Beautiful, theme-aware home screen displaying promotional banners,
+// interactive category chips, and popular Nike shoes.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -65,8 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onCategorySelected(int index) {
     setState(() => _activeCategoryIndex = index);
-    
-    // Switch to search tab (index 1) and apply the filter
+
     final selectedCategory = _categories[index];
     widget.onCategoryChange(selectedCategory);
     widget.onTabChange(1); // switch to Search tab
@@ -76,10 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final productProv = context.watch<ProductProvider>();
     final cartProv = context.read<CartProvider>();
-    final featuredProducts = productProv.products.take(6).toList();
+    final featuredProducts = productProv.products;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: const AppHeader(showBack: false),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -103,27 +105,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     height: 52,
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: AppColors.surface(context),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
+                          color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.search_rounded, color: AppColors.mediumGray),
-                        SizedBox(width: 12),
+                        const Icon(Icons.search_rounded, color: AppColors.mediumGray),
+                        const SizedBox(width: 12),
                         Text(
                           'Looking for shoes?',
-                          style: TextStyle(color: AppColors.mediumGray, fontSize: 14),
+                          style: TextStyle(color: AppColors.secondaryText(context), fontSize: 14),
                         ),
-                        Spacer(),
-                        Icon(Icons.tune_rounded, color: AppColors.black),
+                        const Spacer(),
+                        Icon(Icons.tune_rounded, color: AppColors.primaryText(context)),
                       ],
                     ),
                   ),
@@ -154,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: (banner['gradient'][0] as Color).withValues(alpha: 0.25),
+                            color: (banner['gradient'][0] as Color).withValues(alpha: isDark ? 0.4 : 0.25),
                             blurRadius: 10,
                             offset: const Offset(0, 6),
                           ),
@@ -244,7 +246,12 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.only(left: 24),
-              child: Text('Categories', style: AppTextStyles.heading3),
+              child: Text(
+                'Categories',
+                style: AppTextStyles.heading3.copyWith(
+                  color: AppColors.primaryText(context),
+                ),
+              ),
             ),
             const SizedBox(height: 12),
             FadeInUp(
@@ -264,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.orange : AppColors.white,
+                          color: isSelected ? AppColors.orange : AppColors.surface(context),
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: isSelected
                               ? [
@@ -279,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Text(
                           _categories[index],
                           style: TextStyle(
-                            color: isSelected ? AppColors.white : AppColors.darkGray,
+                            color: isSelected ? AppColors.white : AppColors.primaryText(context),
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             fontSize: 13,
                           ),
@@ -298,7 +305,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Popular Featured', style: AppTextStyles.heading3),
+                  Text(
+                    'Popular Featured',
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.primaryText(context),
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () {
                       widget.onCategoryChange('All');
@@ -356,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('${product.name} added to cart!'),
-                          backgroundColor: AppColors.black,
+                          backgroundColor: AppColors.blackButton(context),
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           margin: const EdgeInsets.all(16),
@@ -388,15 +400,16 @@ class _ShoeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.surface(context),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -453,7 +466,7 @@ class _ShoeCard extends StatelessWidget {
             // Product Category
             Text(
               product.category,
-              style: AppTextStyles.categoryLabel.copyWith(fontSize: 11),
+              style: AppTextStyles.categoryLabel.copyWith(fontSize: 11, color: AppColors.secondaryText(context)),
             ),
             const SizedBox(height: 2),
 
@@ -462,10 +475,10 @@ class _ShoeCard extends StatelessWidget {
               product.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
-                color: AppColors.black,
+                color: AppColors.primaryText(context),
               ),
             ),
             const SizedBox(height: 6),
@@ -477,9 +490,9 @@ class _ShoeCard extends StatelessWidget {
                 Text(
                   '\$${product.price.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                     fontSize: 15,
-                    color: AppColors.black,
+                    color: AppColors.primaryText(context),
                   ),
                 ),
                 GestureDetector(
@@ -487,13 +500,13 @@ class _ShoeCard extends StatelessWidget {
                   child: Container(
                     width: 32,
                     height: 32,
-                    decoration: const BoxDecoration(
-                      color: AppColors.black,
+                    decoration: BoxDecoration(
+                      color: AppColors.blackButton(context),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.add_rounded,
-                      color: AppColors.white,
+                      color: isDark ? AppColors.black : AppColors.white,
                       size: 18,
                     ),
                   ),

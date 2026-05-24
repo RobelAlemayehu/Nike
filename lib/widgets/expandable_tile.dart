@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/widgets/expandable_tile.dart
 // Custom animated expandable section (replaces default ExpansionTile styling)
+// with gorgeous dark/light mode compatibility.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
@@ -72,11 +73,16 @@ class _ExpandableTileState extends State<ExpandableTile>
   @override
   Widget build(BuildContext context) {
     final hasContent = widget.child != null || widget.description != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       children: [
         // ── Divider ──────────────────────────────────────────────────────────
-        Divider(color: AppColors.lightGray, height: 1, thickness: 1),
+        Divider(
+          color: isDark ? AppColors.darkBorder : AppColors.lightGray,
+          height: 1,
+          thickness: 1,
+        ),
         // ── Header row ───────────────────────────────────────────────────────
         InkWell(
           onTap: _toggle,
@@ -86,7 +92,12 @@ class _ExpandableTileState extends State<ExpandableTile>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.title, style: AppTextStyles.sectionTitle),
+                Text(
+                  widget.title,
+                  style: AppTextStyles.sectionTitle.copyWith(
+                    color: AppColors.primaryText(context),
+                  ),
+                ),
                 RotationTransition(
                   turns: _rotationAnim,
                   child: Icon(
@@ -94,7 +105,7 @@ class _ExpandableTileState extends State<ExpandableTile>
                         ? Icons.arrow_forward_ios_rounded
                         : Icons.keyboard_arrow_down_rounded,
                     size: 18,
-                    color: AppColors.mediumGray,
+                    color: AppColors.secondaryText(context),
                   ),
                 ),
               ],
@@ -110,7 +121,9 @@ class _ExpandableTileState extends State<ExpandableTile>
               child: widget.child ??
                   Text(
                     widget.description!,
-                    style: AppTextStyles.bodyMedium,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.secondaryText(context),
+                    ),
                   ),
             ),
           ),

@@ -1,5 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/data/mock_data.dart
+// Mock database supplying high-fidelity products, categories, detailed specs,
+// multi-currency scaling support, and rich, realistic user reviews.
 // ─────────────────────────────────────────────────────────────────────────────
 import '../models/product_model.dart';
 import '../models/review_model.dart';
@@ -8,16 +10,15 @@ class MockData {
   MockData._();
 
   static final List<Product> products = [
-    // p1 — air_max_1, air_max_2
     Product(
       id: 'p1',
-      name: 'Nike Air Pegasus+ 30 ',
-      category: "Men's Shoe",
+      name: 'Nike Air Pegasus+ 30',
+      category: "Running Shoe",
       price: 290.00,
       rating: 4.5,
       reviewCount: 128,
       description:
-          'Lacing up in the Nike Air Pegasus+ 30  keeps your look rooted in '
+          'Lacing up in the Nike Air Pegasus+ 30 keeps your look rooted in '
           'the past while it heads into the future. The iconic Waffle sole, '
           'bold colour blocking and classic TPU accents make it a must-have sneaker.',
       imageUrls: [
@@ -31,12 +32,12 @@ class MockData {
     ),
     Product(
       id: 'p2',
-      name: "Nike Kobe 4",
-      category: "Men's Shoe",
-      price: 110.00,
+      name: "Nike Kobe 4 Protro",
+      category: "Sports Shoe",
+      price: 180.00,
       rating: 4.7,
       reviewCount: 342,
-      description: "The radiance lives on in theNike Kobe 4, the basketball "
+      description: "The radiance lives on in the Nike Kobe 4, the basketball "
           'original that puts a fresh spin on what you know best: durably '
           'stitched overlays, iconic foam midsole and the classic Swoosh.',
       imageUrls: [
@@ -51,7 +52,7 @@ class MockData {
     Product(
       id: 'p3',
       name: 'Nike SB Dunk High',
-      category: "Men's Shoe",
+      category: "Casual Shoe",
       price: 250.00,
       rating: 4.3,
       reviewCount: 96,
@@ -68,11 +69,10 @@ class MockData {
         'EU': ['39', '40', '41', '42', '43', '44', '45'],
       },
     ),
-    // p4 — Women's Nike Dunk High — pegasus_1 + air_force_1 as placeholders
     Product(
       id: 'p4',
       name: "Nike Air Max Thea",
-      category: "Women's Shoe",
+      category: "Casual Shoe",
       price: 115.00,
       rating: 4.6,
       reviewCount: 214,
@@ -133,7 +133,7 @@ class MockData {
     Product(
       id: 'p7',
       name: "Nike Lunar Ascend",
-      category: "Golf Shoes",
+      category: "Sports Shoe",
       price: 130.00,
       rating: 4.6,
       reviewCount: 184,
@@ -152,8 +152,8 @@ class MockData {
     ),
     Product(
       id: 'p8',
-      name: "Air Force 1",
-      category: "Men's Shoe",
+      name: "Nike Air Force 1 Low",
+      category: "Casual Shoe",
       price: 110.00,
       rating: 4.5,
       reviewCount: 150,
@@ -172,7 +172,7 @@ class MockData {
     Product(
       id: 'p9',
       name: "Nike Air Max Plus OG",
-      category: "Men's Shoe",
+      category: "Casual Shoe",
       price: 160.00,
       rating: 4.7,
       reviewCount: 210,
@@ -186,6 +186,128 @@ class MockData {
         'US': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11'],
         'UK': ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10'],
         'EU': ['40', '41', '42', '43', '44', '45'],
+      },
+    ),
+
+    // ── 6 Additional Trendy Shoes ────────────────────────────────────────────
+    Product(
+      id: 'p10',
+      name: 'Nike Air Max 97 Metallic',
+      category: "Casual Shoe",
+      price: 185.00,
+      rating: 4.8,
+      reviewCount: 145,
+      description:
+          'Featuring the original ripple design inspired by Japanese bullet trains, '
+          'the Nike Air Max 97 Metallic pushes your style forward at full speed. '
+          'With its revolutionary full-length Nike Air unit, it delivers premium comfort.',
+      imageUrls: [
+        'assets/images/air_max_1.png',
+      ],
+      sizes: {
+        'US': ['6', '7', '8', '9', '10', '11'],
+        'UK': ['5', '6', '7', '8', '9', '10'],
+        'EU': ['39', '40', '41', '42', '43', '45'],
+      },
+    ),
+    Product(
+      id: 'p11',
+      name: 'Nike Zoom Fly 5 Premium',
+      category: "Running Shoe",
+      price: 170.00,
+      rating: 4.6,
+      reviewCount: 88,
+      description:
+          'Bridge the gap between your weekend training run and race day in a durable '
+          'design that can be deployed at the starting line. ZoomX foam and carbon fiber '
+          'propel you forward with every stride.',
+      imageUrls: [
+        'assets/images/flyknit_1.png',
+      ],
+      sizes: {
+        'US': ['7', '8', '9', '10', '11', '12'],
+        'UK': ['6', '7', '8', '9', '10', '11'],
+        'EU': ['40', '41', '42', '43', '44', '46'],
+      },
+    ),
+    Product(
+      id: 'p12',
+      name: 'Nike Court Majestic Leather',
+      category: "Formal Shoe",
+      price: 90.00,
+      rating: 4.4,
+      reviewCount: 64,
+      description:
+          'A sleek, minimalist leather court shoe designed to blend into formal and semi-casual '
+          'settings. Features a clean stitched profile and premium full-grain leather upper '
+          'for an effortlessly refined look.',
+      imageUrls: [
+        'assets/images/air_force_2.png',
+      ],
+      sizes: {
+        'US': ['7', '7.5', '8', '8.5', '9', '9.5', '10', '11'],
+        'UK': ['6', '6.5', '7', '7.5', '8', '8.5', '9', '10'],
+        'EU': ['40', '41', '42', '43', '44', '45'],
+      },
+    ),
+    Product(
+      id: 'p13',
+      name: 'Nike Air Zoom Pegasus 39',
+      category: "Running Shoe",
+      price: 135.00,
+      rating: 4.9,
+      reviewCount: 420,
+      description:
+          'Let the Nike Air Zoom Pegasus 39 help you ascend to new heights. '
+          'More lightweight than its predecessor and ideal to wear in any season, '
+          'it has a supportive sensation to help keep your feet contained.',
+      imageUrls: [
+        'assets/images/pegasus_1.png',
+      ],
+      sizes: {
+        'US': ['5', '6', '7', '8', '9', '10', '11', '12'],
+        'UK': ['4', '5', '6', '7', '8', '9', '10', '11'],
+        'EU': ['38', '39', '40', '41', '42', '43', '44', '46'],
+      },
+    ),
+    Product(
+      id: 'p14',
+      name: "Nike Air Force 1 '07 Craft",
+      category: "Casual Shoe",
+      price: 140.00,
+      rating: 4.8,
+      reviewCount: 198,
+      description:
+          "The legend lives on in the Nike Air Force 1 '07 Craft—a modern take on the "
+          'iconic AF-1, featuring fresh details like brushed leather texture, plush liner '
+          'and beautifully executed contrast stitching.',
+      imageUrls: [
+        'assets/images/air_force_1.png',
+      ],
+      sizes: {
+        'US': ['6', '7', '8', '9', '10', '11', '12'],
+        'UK': ['5', '6', '7', '8', '9', '10', '11'],
+        'EU': ['39', '40', '41', '42', '43', '44', '46'],
+      },
+    ),
+    Product(
+      id: 'p15',
+      name: 'Nike SB Dunk Low Pro',
+      category: "Casual Shoe",
+      price: 125.00,
+      rating: 4.7,
+      reviewCount: 310,
+      description:
+          'The Nike SB Dunk Low Pro delivers iconic Dunk style in a low-cut silhouette. '
+          'A Zoom Air unit in the heel and a padded tongue provide a comfortable fit '
+          'that is made to skate or walk with confidence.',
+      imageUrls: [
+        'assets/images/air_force_3.png',
+      ],
+      sizes: {
+        'US': ['6', '7', '8', '9', '10', '11'],
+        'UK': ['5', '6', '7', '8', '9', '10'],
+        'EU': ['39', '40', '41', '42', '43', '45'],
       },
     ),
   ];
@@ -202,7 +324,7 @@ class MockData {
         avatarUrl: 'https://i.pravatar.cc/100?img=11',
         rating: 5.0,
         text:
-            "The most comfortable Nike Air Pegasus+ 30  I've worn. The sole cushioning is "
+            "The most comfortable Nike Air Pegasus+ 30 I've worn. The sole cushioning is "
             "unbelievable and I've had zero foot pain even after 12-hour shifts. "
             "Absolutely worth every penny.",
         date: '10.02.2024',
@@ -451,6 +573,74 @@ class MockData {
         rating: 4.5,
         text: "Love the retro look and the Tuned Air cushioning is superb.",
         date: '19.05.2024',
+      ),
+    ],
+
+    // Reviews for new products
+    'p10': [
+      Review(
+        id: 'r10a',
+        productId: 'p10',
+        reviewerName: 'Mason Cooper',
+        avatarUrl: 'https://i.pravatar.cc/100?img=33',
+        rating: 5.0,
+        text: 'The metallic finish turns heads everywhere I go. The full-length Air unit feels like walking on clouds!',
+        date: '20.05.2026',
+      ),
+    ],
+    'p11': [
+      Review(
+        id: 'r11a',
+        productId: 'p11',
+        reviewerName: 'Elena Rostova',
+        avatarUrl: 'https://i.pravatar.cc/100?img=41',
+        rating: 5.0,
+        text: 'Highly recommended for marathon prep. Extreme energy return and very lightweight.',
+        date: '21.05.2026',
+      ),
+    ],
+    'p12': [
+      Review(
+        id: 'r12a',
+        productId: 'p12',
+        reviewerName: 'Nathaniel Cole',
+        avatarUrl: 'https://i.pravatar.cc/100?img=60',
+        rating: 4.0,
+        text: 'Perfect bridge between athletic build and professional style. Clean leather is easy to wipe down.',
+        date: '22.05.2026',
+      ),
+    ],
+    'p13': [
+      Review(
+        id: 'r13a',
+        productId: 'p13',
+        reviewerName: 'Claire Bennet',
+        avatarUrl: 'https://i.pravatar.cc/100?img=45',
+        rating: 5.0,
+        text: 'My absolute favorite daily trainers. Pegasus never disappoints, and version 39 is the lightest yet.',
+        date: '22.05.2026',
+      ),
+    ],
+    'p14': [
+      Review(
+        id: 'r14a',
+        productId: 'p14',
+        reviewerName: 'James Carter',
+        avatarUrl: 'https://i.pravatar.cc/100?img=58',
+        rating: 5.0,
+        text: 'The Craft edition has incredibly premium leather compared to standard AF1s. Worth the extra price!',
+        date: '23.05.2026',
+      ),
+    ],
+    'p15': [
+      Review(
+        id: 'r15a',
+        productId: 'p15',
+        reviewerName: 'Tony Hawkson',
+        avatarUrl: 'https://i.pravatar.cc/100?img=28',
+        rating: 4.0,
+        text: 'Classic SB Dunk performance. Padded tongue gives excellent lock-in. Very durable sole grip.',
+        date: '23.05.2026',
       ),
     ],
   };

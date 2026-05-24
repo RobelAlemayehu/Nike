@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // lib/widgets/app_header.dart
 // Shared top header: back button | Nike logo | cart badge
+// Adapted for high performance Dark/Light mode transitions.
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +22,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final cartCount = context.watch<CartProvider>().totalCount;
 
     return AppBar(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.scaffoldBg(context),
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: true,
@@ -57,23 +58,24 @@ class _CircleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.surface(context),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Icon(icon, size: 18, color: AppColors.black),
+        child: Icon(icon, size: 18, color: AppColors.primaryText(context)),
       ),
     );
   }
@@ -86,6 +88,7 @@ class _CartBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -114,12 +117,12 @@ class _CartBadge extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.black,
+              color: AppColors.blackButton(context),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.shopping_bag_outlined,
-              color: AppColors.white,
+              color: isDark ? AppColors.black : AppColors.white,
               size: 20,
             ),
           ),
@@ -166,7 +169,7 @@ class _NikeLogo extends StatelessWidget {
         fontSize: 22,
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
-        color: AppColors.black,
+        color: AppColors.primaryText(context),
         letterSpacing: -0.5,
       ),
     );
